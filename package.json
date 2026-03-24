@@ -1,0 +1,16 @@
+{
+  "name": "longly-ceiling-pos",
+  "version": "1.0.0",
+  "description": "POS system for LongLy Ceiling",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
+}

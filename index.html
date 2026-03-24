@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LongLy Ceiling POS</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #1B4B3E;
+  --brand-light: #2D7A62;
+  --brand-pale: #E8F5F0;
+  --accent: #F4A623;
+  --accent-pale: #FEF6E7;
+  --danger: #E03B3B;
+  --danger-pale: #FEF0F0;
+  --success: #2D7A62;
+  --text-primary: #111;
+  --text-secondary: #555;
+  --text-muted: #999;
+  --bg: #F5F3EF;
+  --surface: #FFFFFF;
+  --border: #E2DDD6;
+  --border-strong: #C8C2BA;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'DM Sans', 'Hanuman', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-size: 15px;
+  overflow-x: hidden;
+}
+
+/* ── LANGUAGE SWITCHER ── */
+.lang-bar {
+  background: var(--brand);
+  padding: 0 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lang-bar .biz-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.lang-btns { display: flex; gap: 6px; }
+.lang-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lang-btn.active { background: #fff; color: var(--brand); font-weight: 600; }
+
+/* ── NAV ── */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  padding: 0 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 4px;
+  overflow-x: auto;
+}
+.nav-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 14px 8px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.nav-btn .nav-icon { font-size: 20px; }
+.nav-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
+.nav-btn .nav-label-km { font-size: 11px; }
+
+/* ── PAGES ── */
+.page { display: none; padding: 16px; max-width: 960px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── STAT CARDS ── */
+.stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+.stat-card .s-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.stat-card .s-label-km { font-size: 11px; color: var(--text-muted); display: block; }
+.stat-card .s-value { font-size: 26px; font-weight: 600; }
+.stat-card.green .s-value { color: var(--brand); }
+.stat-card.amber .s-value { color: #B07A10; }
+.stat-card.red .s-value { color: var(--danger); }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brand);
+}
+.card-title .km { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+/* ── FORM FIELDS ── */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+.field label .km { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 15px;
+  background: var(--surface);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--brand-light);
+  box-shadow: 0 0 0 3px rgba(45,122,98,0.1);
+}
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 13px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-light); }
+.btn-accent { background: var(--accent); color: #5A3A00; }
+.btn-danger { background: var(--danger-pale); color: var(--danger); }
+.btn-outline { background: var(--surface); color: var(--brand); border: 1.5px solid var(--brand); }
+.btn-ghost { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-sm { padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+.btn-full { width: 100%; }
+.btn .km { font-size: 11px; opacity: 0.8; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-ok { background: #E8F5F0; color: #1B4B3E; }
+.badge-low { background: var(--accent-pale); color: #7A5010; }
+.badge-out { background: var(--danger-pale); color: var(--danger); }
+
+/* ── POS LAYOUT ── */
+.pos-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  align-items: start;
+}
+@media(max-width: 720px) { .pos-layout { grid-template-columns: 1fr; } }
+
+/* ── PRODUCT TILES ── */
+.cat-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.cat-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.cat-pill.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+.product-tile {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  position: relative;
+  user-select: none;
+}
+.product-tile:active { transform: scale(0.96); }
+.product-tile.out-of-stock { opacity: 0.45; pointer-events: none; }
+.product-tile:hover { border-color: var(--brand-light); box-shadow: 0 0 0 3px rgba(45,122,98,0.1); }
+.product-tile .p-icon { font-size: 30px; margin-bottom: 8px; }
+.product-tile .p-name { font-size: 13px; font-weight: 500; line-height: 1.3; margin-bottom: 4px; }
+.product-tile .p-name-km { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; line-height: 1.3; }
+.product-tile .p-price { font-size: 14px; font-weight: 600; color: var(--brand); }
+.product-tile .p-stock { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.product-tile .stock-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--accent);
+  color: #5A3A00;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+/* ── CART ── */
+.cart-wrapper {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: sticky;
+  top: 90px;
+}
+.cart-header {
+  background: var(--brand);
+  color: #fff;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cart-header .km { font-size: 11px; opacity: 0.7; }
+.cart-body { padding: 14px 16px; }
+.cart-empty { text-align: center; padding: 24px 0; color: var(--text-muted); font-size: 13px; }
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item:last-child { border-bottom: none; }
+.ci-name { flex: 1; font-size: 13px; font-weight: 500; }
+.ci-name .km { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+.qty-row { display: flex; align-items: center; gap: 6px; }
+.qty-btn {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+  font-family: inherit;
+  transition: all 0.1s;
+}
+.qty-btn:active { transform: scale(0.92); background: var(--border); }
+.ci-qty { min-width: 24px; text-align: center; font-weight: 600; font-size: 15px; }
+.ci-total { font-size: 14px; font-weight: 600; color: var(--brand); min-width: 58px; text-align: right; }
+
+.cart-summary { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+.summary-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; color: var(--text-secondary); }
+.summary-row.total { font-size: 18px; font-weight: 700; color: var(--brand); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+
+/* ── STOCK TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 10px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 500; white-space: nowrap; }
+td { padding: 12px 12px; border-bottom: 1px solid #F5F3EF; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+.stock-adj { display: flex; align-items: center; gap: 6px; }
+.stock-adj input { width: 64px; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px 36px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.modal-title-km { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+/* ── HISTORY ── */
+.sale-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.sale-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.sale-inv { font-size: 14px; font-weight: 600; color: var(--brand); }
+.sale-date { font-size: 12px; color: var(--text-muted); }
+.sale-customer { font-size: 15px; font-weight: 500; }
+.sale-amount { font-size: 20px; font-weight: 700; color: var(--brand); }
+.sale-items-preview { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+/* ── SEARCH ── */
+.search-bar { position: relative; margin-bottom: 12px; }
+.search-bar input { padding-left: 40px; }
+.search-bar::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--brand);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 999;
+  transition: transform 0.3s ease;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── INVOICE PRINT ── */
+@media print {
+  body * { visibility: hidden; }
+  #print-area, #print-area * { visibility: visible; }
+  #print-area {
+    position: fixed; top: 0; left: 0;
+    width: 100%; padding: 30px;
+    background: #fff;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Language bar -->
+<div class="lang-bar">
+  <span class="biz-name">🏠 LongLy Ceiling</span>
+  <div class="lang-btns">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('km')">ខ្មែរ</button>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav>
+  <button class="nav-btn active" onclick="showPage('pos')" id="nav-pos">
+    <span class="nav-icon">🛒</span>
+    <span class="nav-label-en">Sales</span>
+    <span class="nav-label-km">លក់ទំនិញ</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('stock')" id="nav-stock">
+    <span class="nav-icon">📦</span>
+    <span class="nav-label-en">Stock</span>
+    <span class="nav-label-km">ស្តុក</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('products')" id="nav-products">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label-en">Products</span>
+    <span class="nav-label-km">ផលិតផល</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('history')" id="nav-history">
+    <span class="nav-icon">📄</span>
+    <span class="nav-label-en">History</span>
+    <span class="nav-label-km">ប្រវត្តិ</span>
+  </button>
+  <button class="nav-btn" onclick="showPage('dashboard')" id="nav-dashboard">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label-en">Dashboard</span>
+    <span class="nav-label-km">ទិន្នន័យ</span>
+  </button>
+</nav>
+
+<!-- ═══════════════ POS PAGE ═══════════════ -->
+<div class="page active" id="page-pos">
+  <div class="pos-layout">
+    <div>
+      <!-- Customer info -->
+      <div class="card" style="margin-bottom:14px;">
+        <div class="grid2">
+          <div class="field" style="margin:0;">
+            <label><span class="en">Customer Name</span> <span class="km" style="font-size:11px;">ឈ្មោះអតិថិជន</span></label>
+            <input id="cust-name" type="text" placeholder="e.g. Dara / ដារ៉ា">
+          </div>
+          <div class="field" style="margin:0;">
+            <label><span class="en">Phone</span> <span class="km" style="font-size:11px;">លេខទូរស័ព្ទ</span></label>
+            <input id="cust-phone" type="tel" placeholder="012 xxx xxx">
+          </div>
+        </div>
+      </div>
+
+      <!-- Category filter -->
+      <div class="cat-filter" id="cat-filter"></div>
+
+      <!-- Search -->
+      <div class="search-bar">
+        <input type="text" id="search-product" placeholder="🔍  Search product / ស្វែងរកផលិតផល" oninput="renderProducts()">
+      </div>
+
+      <!-- Product grid -->
+      <div class="product-grid" id="product-grid">
+        <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">Loading... / កំពុងផ្ទុក...</div>
+      </div>
+    </div>
+
+    <!-- Cart -->
+    <div class="cart-wrapper">
+      <div class="cart-header">
+        <span>🛒 <span class="en">Invoice</span> <span class="km">វិក្កយបត្រ</span></span>
+        <button onclick="clearCart()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">
+          <span class="en">Clear</span><span class="km">លុប</span>
+        </button>
+      </div>
+      <div class="cart-body">
+        <div id="cart-list"></div>
+        <div id="cart-summary"></div>
+        <button class="btn btn-accent btn-full" style="margin-top:14px;" onclick="openCheckout()">
+          ✅ <span class="en">Checkout</span> <span class="km">បង់ប្រាក់</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STOCK PAGE ═══════════════ -->
+<div class="page" id="page-stock">
+  <div class="stats-row" id="stock-stats-row" style="margin-bottom:16px;"></div>
+  <div class="card">
+    <div class="card-title">📦 <span class="en">Stock Management</span> <span class="km">ការគ្រប់គ្រងស្តុក</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><span class="en">Product</span><br><span class="km">ផលិតផល</span></th>
+            <th><span class="en">Price</span><br><span class="km">តម្លៃ</span></th>
+            <th><span class="en">Stock</span><br><span class="km">ស្តុក</span></th>
+            <th><span class="en">Status</span><br><span class="km">ស្ថានភាព</span></th>
+            <th><span class="en">Add / Remove</span><br><span class="km">បន្ថែម / ដក</span></th>
+          </tr>
+        </thead>
+        <tbody id="stock-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PRODUCTS PAGE ═══════════════ -->
+<div class="page" id="page-products">
+  <div class="card">
+    <div class="card-title" id="prod-form-title">➕ <span class="en">Add Product</span> <span class="km">បន្ថែមផលិតផល</span></div>
+    <input type="hidden" id="edit-id">
+    <div class="grid2">
+      <div class="field">
+        <label><span class="en">Name (English)</span> <span class="km">ឈ្មោះ (អង់គ្លេស)</span></label>
+        <input id="p-name-en" placeholder="e.g. Gypsum Board 9mm">
+      </div>
+      <div class="field">
+        <label><span class="en">Name (Khmer)</span> <span class="km">ឈ្មោះ (ខ្មែរ)</span></label>
+        <input id="p-name-km" placeholder="ឧ. ក្ដារ Gypsum 9mm">
+      </div>
+      <div class="field">
+        <label><span class="en">Category (EN)</span> <span class="km">ប្រភេទ (EN)</span></label>
+        <input id="p-cat-en" placeholder="e.g. Gypsum">
+      </div>
+      <div class="field">
+        <label><span class="en">Category (KM)</span> <span class="km">ប្រភេទ (KM)</span></label>
+        <input id="p-cat-km" placeholder="ឧ. ជីបស៊ូម">
+      </div>
+      <div class="field">
+        <label><span class="en">Unit (EN)</span> <span class="km">ឯកតា (EN)</span></label>
+        <input id="p-unit-en" placeholder="sheet / box / piece">
+      </div>
+      <div class="field">
+        <label><span class="en">Unit (KM)</span> <span class="km">ឯកតា (KM)</span></label>
+        <input id="p-unit-km" placeholder="សន្លឹក / ប្រអប់ / ដំណក់">
+      </div>
+      <div class="field">
+        <label><span class="en">Price ($)</span> <span class="km">តម្លៃ ($)</span></label>
+        <input id="p-price" type="number" step="0.01" min="0" placeholder="0.00">
+      </div>
+      <div class="field">
+        <label><span class="en">Initial Stock</span> <span class="km">ស្តុកដំបូង</span></label>
+        <input id="p-stock" type="number" min="0" placeholder="0">
+      </div>
+      <div class="field">
+        <label><span class="en">Low Stock Alert</span> <span class="km">ការជូនដំណឹងស្តុកទាប</span></label>
+        <input id="p-low" type="number" min="0" placeholder="5">
+      </div>
+      <div class="field">
+        <label><span class="en">Icon (emoji)</span> <span class="km">រូបតំណាង</span></label>
+        <input id="p-icon" placeholder="📦" style="font-size:20px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveProduct()">
+        💾 <span class="en">Save</span> <span class="km">រក្សាទុក</span>
+      </button>
+      <button class="btn btn-ghost" onclick="resetProductForm()">
+        <span class="en">Reset</span> <span class="km">សន្លឹក</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 <span class="en">All Products</span> <span class="km">ផលិតផលទាំងអស់</span></div>
+    <div id="all-products-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ HISTORY PAGE ═══════════════ -->
+<div class="page" id="page-history">
+  <div class="card-title" style="margin-bottom:14px; padding:0 4px;">
+    📄 <span class="en">Sales History</span> <span class="km">ប្រវត្តិការលក់</span>
+  </div>
+  <div id="history-list"></div>
+</div>
+
+<!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="stats-row" id="dash-stats" style="grid-template-columns:repeat(2,1fr);"></div>
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">📊 <span class="en">Today's Summary</span> <span class="km">សង្ខេបថ្ងៃនេះ</span></div>
+    <div id="dash-today"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHECKOUT MODAL ═══════════════ -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✅ <span class="en">Checkout</span> <span class="km">ការបង់ប្រាក់</span></div>
+    <div class="modal-title-km" id="co-summary-text"></div>
+
+    <div id="co-items" style="margin-bottom:16px;"></div>
+
+    <div class="field">
+      <label><span class="en">Payment Method</span> <span class="km">វិធីបង់ប្រាក់</span></label>
+      <select id="co-method">
+        <option value="Cash">💵 Cash / សាច់ប្រាក់</option>
+        <option value="ABA">🏦 ABA Bank Transfer</option>
+        <option value="Wing">📱 Wing / Pi Pay</option>
+        <option value="Credit">📝 Credit / ជំពាក់</option>
+      </select>
+    </div>
+    <div class="field">
+      <label><span class="en">Amount Received ($)</span> <span class="km">ចំនួនទទួល ($)</span></label>
+      <input id="co-received" type="number" step="0.01" placeholder="0.00" oninput="calcChange()" style="font-size:20px;font-weight:700;">
+    </div>
+    <div id="co-change" style="font-size:16px;font-weight:600;color:var(--brand);margin-bottom:16px;text-align:center;min-height:24px;"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeCheckout()">
+        <span class="en">Cancel</span> <span class="km">បោះបង់</span>
+      </button>
+      <button class="btn btn-primary" style="flex:1;" onclick="completeSale()">
+        🖨️ <span class="en">Confirm & Print</span> <span class="km">បញ្ជាក់ & បោះពុម្ព</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PRINT AREA -->
+<div id="print-area" style="display:none;"></div>
+
+<script>
+// ═══════════ LANGUAGE ═══════════
+let lang = 'en';
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn:${l==='en'?'first':'last'}-child`).classList.add('active');
+  document.querySelectorAll('.en').forEach(el => el.style.display = l==='en' ? '' : 'none');
+  document.querySelectorAll('.km').forEach(el => el.style.display = l==='km' ? '' : 'none');
+  renderProducts();
+}
+
+// ═══════════ STATE ═══════════
+let products = [];
+let cart = [];
+let currentPage = 'pos';
+
+// ═══════════ API ═══════════
+const API = '/api';
+async function api(method, path, body) {
+  const r = await fetch(API + path, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!r.ok) throw await r.json();
+  return r.json();
+}
+
+// ═══════════ NAV ═══════════
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  document.getElementById('nav-' + p).classList.add('active');
+  currentPage = p;
+  if (p === 'pos') { loadProducts(); renderCart(); }
+  if (p === 'stock') loadStock();
+  if (p === 'products') { loadProducts(); renderProductList(); }
+  if (p === 'history') loadHistory();
+  if (p === 'dashboard') loadDashboard();
+}
+
+// ═══════════ PRODUCTS ═══════════
+async function loadProducts() {
+  try {
+    products = await api('GET', '/products');
+    renderProducts();
+    renderCatFilter();
+  } catch(e) { showToast('Error loading products'); }
+}
+
+let activeCat = '';
+function renderCatFilter() {
+  const cats = [...new Set(products.map(p => p.category_en))];
+  const f = document.getElementById('cat-filter');
+  f.innerHTML = `<button class="cat-pill ${activeCat===''?'active':''}" onclick="filterCat('')">
+    <span class="en">All</span><span class="km">ទាំងអស់</span>
+  </button>` + cats.map(c => {
+    const km = products.find(p => p.category_en === c)?.category_km || '';
+    return `<button class="cat-pill ${activeCat===c?'active':''}" onclick="filterCat('${c}')">
+      <span class="en">${c}</span><span class="km">${km}</span>
+    </button>`;
+  }).join('');
+  setLang(lang);
+}
+
+function filterCat(cat) {
+  activeCat = cat;
+  renderCatFilter();
+  renderProducts();
+}
+
+function renderProducts() {
+  const q = (document.getElementById('search-product')?.value || '').toLowerCase();
+  const filtered = products.filter(p =>
+    (!activeCat || p.category_en === activeCat) &&
+    (!q || p.name_en.toLowerCase().includes(q) || (p.name_km || '').includes(q))
+  );
+  const grid = document.getElementById('product-grid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1;">
+      <div style="font-size:32px;margin-bottom:8px;">🔍</div>
+      <span class="en">No products found</span><span class="km">រកមិនឃើញ</span>
+    </div>`;
+    setLang(lang);
+    return;
+  }
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-tile ${p.stock===0?'out-of-stock':''}" onclick="addToCart('${p.id}')">
+      ${p.stock > 0 && p.stock <= p.low_stock_alert ? `<div class="stock-badge">⚠️</div>` : ''}
+      <div class="p-icon">${p.icon || '📦'}</div>
+      <div class="p-name en">${p.name_en}</div>
+      <div class="p-name-km km">${p.name_km || ''}</div>
+      <div class="p-price">$${parseFloat(p.price).toFixed(2)}</div>
+      <div class="p-stock">
+        <span class="en">${p.stock > 0 ? 'Stock: '+p.stock : 'Out of stock'}</span>
+        <span class="km">${p.stock > 0 ? 'ស្តុក: '+p.stock : 'អស់ស្តុក'}</span>
+      </div>
+    </div>`).join('');
+  setLang(lang);
+}
+
+// ═══════════ CART ═══════════
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p || p.stock === 0) return;
+  const item = cart.find(c => c.id === id);
+  if (item) {
+    if (item.qty >= p.stock) { showToast(lang==='km' ? 'ស្តុកមិនគ្រប់!' : 'Not enough stock!'); return; }
+    item.qty++;
+  } else {
+    cart.push({ id, name_en: p.name_en, name_km: p.name_km, price: parseFloat(p.price), unit_en: p.unit_en, unit_km: p.unit_km, qty: 1 });
+  }
+  renderCart();
+  showToast(lang==='km' ? 'បានបន្ថែមទៅកន្ត្រក' : 'Added to cart');
+}
+
+function changeQty(id, d) {
+  const i = cart.findIndex(c => c.id === id);
+  if (i === -1) return;
+  cart[i].qty += d;
+  if (cart[i].qty <= 0) cart.splice(i, 1);
+  renderCart();
+}
+
+function clearCart() {
+  cart = [];
+  renderCart();
+}
+
+function cartTotal() { return cart.reduce((s, c) => s + c.price * c.qty, 0); }
+
+function renderCart() {
+  const list = document.getElementById('cart-list');
+  const summary = document.getElementById('cart-summary');
+  if (!cart.length) {
+    list.innerHTML = `<div class="cart-empty">
+      <div style="font-size:32px;margin-bottom:8px;">🛒</div>
+      <span class="en">Tap a product to add</span>
+      <span class="km">ចុចលើផលិតផលដើម្បីបន្ថែម</span>
+    </div>`;
+    summary.innerHTML = '';
+    setLang(lang);
+    return;
+  }
+  list.innerHTML = cart.map(c => `
+    <div class="cart-item">
+      <div class="ci-name">
+        <div class="en">${c.name_en}</div>
+        <div class="km">${c.name_km || ''}</div>
+        <div style="font-size:11px;color:var(--text-muted);">$${c.price.toFixed(2)}/<span class="en">${c.unit_en}</span><span class="km">${c.unit_km||''}</span></div>
+      </div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty('${c.id}',-1)">−</button>
+        <span class="ci-qty">${c.qty}</span>
+        <button class="qty-btn" onclick="changeQty('${c.id}',1)">+</button>
+      </div>
+      <div class="ci-total">$${(c.price*c.qty).toFixed(2)}</div>
+    </div>`).join('');
+
+  const total = cartTotal();
+  summary.innerHTML = `
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span><span class="en">Items</span><span class="km">ចំណុច</span></span>
+        <span>${cart.reduce((s,c)=>s+c.qty,0)}</span>
+      </div>
+      <div class="summary-row total">
+        <span><span class="en">Total</span><span class="km">សរុប</span></span>
+        <span>$${total.toFixed(2)}</span>
+      </div>
+    </div>`;
+  setLang(lang);
+}
+
+// ═══════════ CHECKOUT ═══════════
+function openCheckout() {
+  if (!cart.length) { showToast(lang==='km' ? 'មិនមានទំនិញ!' : 'Cart is empty!'); return; }
+  const total = cartTotal();
+  document.getElementById('co-summary-text').textContent =
+    lang==='km' ? `ទំនិញ ${cart.length} មុខ · សរុប $${total.toFixed(2)}` : `${cart.length} item(s) · Total $${total.toFixed(2)}`;
+
+  document.getElementById('co-items').innerHTML = cart.map(c =>
+    `<div style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span>${lang==='km'?(c.name_km||c.name_en):c.name_en} × ${c.qty}</span>
+      <span style="font-weight:600;">$${(c.price*c.qty).toFixed(2)}</span>
+    </div>`).join('') +
+    `<div style="display:flex;justify-content:space-between;font-size:17px;font-weight:700;color:var(--brand);padding:10px 0;">
+      <span><span class="en">Total</span><span class="km">សរុប</span></span>
+      <span>$${total.toFixed(2)}</span>
+    </div>`;
+
+  document.getElementById('co-received').value = '';
+  document.getElementById('co-change').textContent = '';
+  document.getElementById('checkout-modal').classList.add('open');
+  setLang(lang);
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-modal').classList.remove('open');
+}
+
+function calcChange() {
+  const recv = parseFloat(document.getElementById('co-received').value) || 0;
+  const total = cartTotal();
+  const el = document.getElementById('co-change');
+  if (recv > 0) {
+    const change = recv - total;
+    el.textContent = change >= 0
+      ? (lang==='km' ? `អាប់: $${change.toFixed(2)}` : `Change: $${change.toFixed(2)}`)
+      : (lang==='km' ? `ខ្វះ: $${(-change).toFixed(2)}` : `Short by: $${(-change).toFixed(2)}`);
+    el.style.color = change >= 0 ? 'var(--brand)' : 'var(--danger)';
+  } else el.textContent = '';
+}
+
+async function completeSale() {
+  const custName = document.getElementById('cust-name').value.trim() || (lang==='km' ? 'អតិថិជនទូទៅ' : 'Walk-in');
+  const method = document.getElementById('co-method').value;
+  const recv = parseFloat(document.getElementById('co-received').value) || cartTotal();
+
+  const payload = {
+    customer_name: custName,
+    customer_phone: document.getElementById('cust-phone').value.trim(),
+    payment_method: method,
+    amount_received: recv,
+    items: cart.map(c => ({
+      product_id: c.id,
+      product_name: c.name_en,
+      unit: c.unit_en,
+      unit_price: c.price,
+      quantity: c.qty,
+      subtotal: parseFloat((c.price * c.qty).toFixed(2))
+    }))
+  };
+
+  try {
+    const sale = await api('POST', '/sales', payload);
+    closeCheckout();
+    printInvoice(sale, custName, method, recv);
+    clearCart();
+    document.getElementById('cust-name').value = '';
+    document.getElementById('cust-phone').value = '';
+    await loadProducts();
+    showToast(lang==='km' ? '✅ ការលក់បានបញ្ចប់!' : '✅ Sale completed!');
+  } catch(e) {
+    showToast(lang==='km' ? 'មានបញ្ហា! ' + (e.error||'') : 'Error: ' + (e.error||'Unknown'));
+  }
+}
+
+// ═══════════ PRINT INVOICE ═══════════
+function printInvoice(sale, custName, method, recv) {
+  const items = sale.sale_items || [];
+  const total = parseFloat(sale.total);
+  const change = recv - total;
+  const date = new Date(sale.created_at).toLocaleString('km-KH', {
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  const html = `
+  <div style="font-family:'Hanuman',sans-serif;max-width:620px;margin:0 auto;padding:30px;background:#fff;">
+    <div style="text-align:center;margin-bottom:24px;border-bottom:2px solid #1B4B3E;padding-bottom:20px;">
+      <div style="font-size:28px;font-weight:700;color:#1B4B3E;letter-spacing:1px;">🏠 LongLy Ceiling</div>
+      <div style="font-size:14px;color:#666;margin-top:4px;">ហាងលក់គ្រឿងសម្ភារៈ</div>
+      <div style="font-size:12px;color:#999;margin-top:4px;">📍 Phnom Penh · 📞 012 XXX XXX</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:12px;color:#999;">អតិថិជន / Customer</div>
+        <div style="font-weight:700;font-size:16px;">${custName}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;color:#999;">លេខវិក្កយបត្រ / Invoice No.</div>
+        <div style="font-weight:700;color:#1B4B3E;font-size:16px;">${sale.invoice_no}</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">${date}</div>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#1B4B3E;color:#fff;">
+          <th style="padding:10px 12px;text-align:left;">ផលិតផល / Product</th>
+          <th style="padding:10px 12px;text-align:center;">qty</th>
+          <th style="padding:10px 12px;text-align:right;">តម្លៃ / Price</th>
+          <th style="padding:10px 12px;text-align:right;">សរុប / Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map((item, i) => `
+          <tr style="background:${i%2===0?'#f9f9f7':'#fff'};">
+            <td style="padding:9px 12px;">${item.product_name}</td>
+            <td style="padding:9px 12px;text-align:center;">${item.quantity} ${item.unit}</td>
+            <td style="padding:9px 12px;text-align:right;">$${parseFloat(item.unit_price).toFixed(2)}</td>
+            <td style="padding:9px 12px;text-align:right;">$${parseFloat(item.subtotal).toFixed(2)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div style="border-top:2px solid #1B4B3E;margin-top:16px;padding-top:14px;">
+      <table style="width:100%;font-size:14px;">
+        <tr><td style="padding:4px 12px;color:#666;">វិធីបង់ប្រាក់ / Payment</td><td style="text-align:right;padding:4px 12px;">${method}</td></tr>
+        <tr><td style="padding:4px 12px;color:#666;">ទទួល / Received</td><td style="text-align:right;padding:4px 12px;">$${recv.toFixed(2)}</td></tr>
+        ${change >= 0 ? `<tr><td style="padding:4px 12px;color:#666;">អាប់ / Change</td><td style="text-align:right;padding:4px 12px;">$${change.toFixed(2)}</td></tr>` : ''}
+        <tr style="font-size:18px;font-weight:700;">
+          <td style="padding:12px 12px;border-top:1px solid #ddd;color:#1B4B3E;">សរុប / TOTAL</td>
+          <td style="text-align:right;padding:12px 12px;border-top:1px solid #ddd;color:#1B4B3E;">$${total.toFixed(2)}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:13px;color:#999;">
+      <div>អរគុណចំពោះការជ្រើសរើស LongLy Ceiling!</div>
+      <div style="margin-top:2px;">Thank you for choosing LongLy Ceiling!</div>
+    </div>
+  </div>`;
+
+  const pa = document.getElementById('print-area');
+  pa.style.display = 'block';
+  pa.innerHTML = html;
+  setTimeout(() => { window.print(); pa.style.display = 'none'; }, 400);
+}
+
+// ═══════════ STOCK PAGE ═══════════
+async function loadStock() {
+  try {
+    products = await api('GET', '/products');
+    renderStockPage();
+  } catch(e) { showToast('Error'); }
+}
+
+function renderStockPage() {
+  const low = products.filter(p => p.stock > 0 && p.stock <= p.low_stock_alert).length;
+  const out = products.filter(p => p.stock === 0).length;
+  const val = products.reduce((s, p) => s + p.stock * parseFloat(p.price), 0);
+
+  document.getElementById('stock-stats-row').innerHTML = `
+    <div class="stat-card green">
+      <div class="s-label"><span class="en">Inventory Value</span><span class="km s-label-km">តម្លៃស្តុក</span></div>
+      <div class="s-value">$${val.toFixed(0)}</div>
+    </div>
+    <div class="stat-card ${low+out>0?'amber':'green'}">
+      <div class="s-label"><span class="en">Low / Out of stock</span><span class="km s-label-km">ស្តុកទាប / អស់</span></div>
+      <div class="s-value">${low} / ${out}</div>
+    </div>`;
+
+  document.getElementById('stock-table-body').innerHTML = products.map(p => {
+    const status = p.stock === 0
+      ? `<span class="badge badge-out"><span class="en">Out</span><span class="km">អស់</span></span>`
+      : p.stock <= p.low_stock_alert
+        ? `<span class="badge badge-low"><span class="en">Low</span><span class="km">ទាប</span></span>`
+        : `<span class="badge badge-ok"><span class="en">OK</span><span class="km">ល្អ</span></span>`;
+    return `<tr>
+      <td>
+        <span style="font-size:18px;">${p.icon||'📦'}</span>
+        <strong style="display:block;font-size:14px;"><span class="en">${p.name_en}</span><span class="km">${p.name_km||p.name_en}</span></strong>
+        <span style="font-size:12px;color:var(--text-muted);"><span class="en">${p.category_en}</span><span class="km">${p.category_km||p.category_en}</span></span>
+      </td>
+      <td>$${parseFloat(p.price).toFixed(2)}</td>
+      <td><strong style="font-size:17px;">${p.stock}</strong></td>
+      <td>${status}</td>
+      <td>
+        <div class="stock-adj">
+          <input type="number" id="adj-${p.id}" placeholder="qty" min="1" style="width:64px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;">
+          <button class="btn btn-sm btn-primary" onclick="adjustStock('${p.id}',1)">+</button>
+          <button class="btn btn-sm btn-danger" onclick="adjustStock('${p.id}',-1)">−</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  setLang(lang);
+}
+
+async function adjustStock(id, dir) {
+  const qty = parseInt(document.getElementById('adj-'+id).value) || 0;
+  if (qty <= 0) { showToast(lang==='km' ? 'បញ្ចូលចំនួន!' : 'Enter a quantity!'); return; }
+  try {
+    await api('POST', `/products/${id}/stock`, {
+      quantity_change: dir * qty,
+      movement_type: dir > 0 ? 'restock' : 'adjustment',
+      note: dir > 0 ? 'Restock' : 'Manual adjustment'
+    });
+    document.getElementById('adj-'+id).value = '';
+    await loadStock();
+    showToast(lang==='km' ? '✅ បានធ្វើបច្ចុប្បន្នភាព' : '✅ Stock updated');
+  } catch(e) { showToast('Error'); }
+}
+
+// ═══════════ PRODUCTS PAGE ═══════════
+function renderProductList() {
+  const el = document.getElementById('all-products-list');
+  if (!products.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:14px;">No products yet.</p>'; return; }
+  el.innerHTML = products.map(p => `
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:24px;">${p.icon||'📦'}</span>
+      <div style="flex:1;">
+        <div style="font-weight:500;"><span class="en">${p.name_en}</span><span class="km">${p.name_km||p.name_en}</span></div>
+        <div style="font-size:12px;color:var(--text-muted);">
+          <span class="en">${p.category_en} · $${parseFloat(p.price).toFixed(2)}/${p.unit_en} · Stock: ${p.stock}</span>
+          <span class="km">${p.category_km||p.category_en} · $${parseFloat(p.price).toFixed(2)}/${p.unit_km||p.unit_en} · ស្តុក: ${p.stock}</span>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline" onclick="editProduct('${p.id}')"><span class="en">Edit</span><span class="km">កែ</span></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑️</button>
+    </div>`).join('');
+  setLang(lang);
+}
+
+async function saveProduct() {
+  const eid = document.getElementById('edit-id').value;
+  const name_en = document.getElementById('p-name-en').value.trim();
+  const price = parseFloat(document.getElementById('p-price').value);
+  if (!name_en || isNaN(price)) {
+    showToast(lang==='km' ? 'សូមបំពេញឈ្មោះ និងតម្លៃ!' : 'Please fill Name and Price!');
+    return;
+  }
+  const body = {
+    name_en, price,
+    name_km: document.getElementById('p-name-km').value.trim(),
+    category_en: document.getElementById('p-cat-en').value.trim() || 'General',
+    category_km: document.getElementById('p-cat-km').value.trim(),
+    unit_en: document.getElementById('p-unit-en').value.trim() || 'unit',
+    unit_km: document.getElementById('p-unit-km').value.trim() || 'គ្រឿង',
+    stock: parseInt(document.getElementById('p-stock').value) || 0,
+    low_stock_alert: parseInt(document.getElementById('p-low').value) || 5,
+    icon: document.getElementById('p-icon').value.trim() || '📦'
+  };
+  try {
+    if (eid) await api('PUT', `/products/${eid}`, body);
+    else await api('POST', '/products', body);
+    resetProductForm();
+    await loadProducts();
+    renderProductList();
+    showToast(lang==='km' ? '✅ បានរក្សាទុក!' : '✅ Saved!');
+  } catch(e) { showToast('Error saving'); }
+}
+
+function editProduct(id) {
+  const p = products.find(x => x.id === id);
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('p-name-en').value = p.name_en;
+  document.getElementById('p-name-km').value = p.name_km || '';
+  document.getElementById('p-cat-en').value = p.category_en;
+  document.getElementById('p-cat-km').value = p.category_km || '';
+  document.getElementById('p-unit-en').value = p.unit_en;
+  document.getElementById('p-unit-km').value = p.unit_km || '';
+  document.getElementById('p-price').value = p.price;
+  document.getElementById('p-stock').value = p.stock;
+  document.getElementById('p-low').value = p.low_stock_alert;
+  document.getElementById('p-icon').value = p.icon || '';
+  document.getElementById('prod-form-title').innerHTML = '✏️ <span class="en">Edit Product</span> <span class="km">កែប្រែផលិតផល</span>';
+  window.scrollTo(0, 0);
+  setLang(lang);
+}
+
+async function deleteProduct(id) {
+  const msg = lang==='km' ? 'លុបផលិតផលនេះ?' : 'Delete this product?';
+  if (!confirm(msg)) return;
+  try {
+    await api('DELETE', `/products/${id}`);
+    await loadProducts();
+    renderProductList();
+    showToast(lang==='km' ? '🗑️ បានលុប' : '🗑️ Deleted');
+  } catch(e) { showToast('Error'); }
+}
+
+function resetProductForm() {
+  ['edit-id','p-name-en','p-name-km','p-cat-en','p-cat-km','p-unit-en','p-unit-km','p-price','p-stock','p-low','p-icon']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('prod-form-title').innerHTML = '➕ <span class="en">Add Product</span> <span class="km">បន្ថែមផលិតផល</span>';
+  setLang(lang);
+}
+
+// ═══════════ HISTORY ═══════════
+async function loadHistory() {
+  try {
+    const sales = await api('GET', '/sales');
+    const el = document.getElementById('history-list');
+    if (!sales.length) {
+      el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-muted);">
+        <div style="font-size:40px;margin-bottom:8px;">📄</div>
+        <span class="en">No sales yet</span><span class="km">មិនមានការលក់ទេ</span>
+      </div>`;
+      setLang(lang); return;
+    }
+    el.innerHTML = sales.map(s => {
+      const date = new Date(s.created_at).toLocaleString();
+      const items = (s.sale_items || []);
+      return `<div class="sale-card">
+        <div class="sale-card-header">
+          <div>
+            <div class="sale-inv">${s.invoice_no}</div>
+            <div class="sale-customer">${s.customer_name}</div>
+            <div class="sale-date">${date} · ${s.payment_method}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="sale-amount">$${parseFloat(s.total).toFixed(2)}</div>
+            <button class="btn btn-sm btn-outline" style="margin-top:8px;" onclick='reprintSale(${JSON.stringify(s)})'>
+              🖨️ <span class="en">Reprint</span><span class="km">បោះពុម្ព</span>
+            </button>
+          </div>
+        </div>
+        <div class="sale-items-preview">${items.map(i => `${i.product_name} ×${i.quantity}`).join(' · ')}</div>
+      </div>`;
+    }).join('');
+    setLang(lang);
+  } catch(e) { showToast('Error loading history'); }
+}
+
+function reprintSale(sale) {
+  printInvoice(sale, sale.customer_name, sale.payment_method, parseFloat(sale.amount_received || sale.total));
+}
+
+// ═══════════ DASHBOARD ═══════════
+async function loadDashboard() {
+  try {
+    const stats = await api('GET', '/stats');
+    document.getElementById('dash-stats').innerHTML = `
+      <div class="stat-card green">
+        <div class="s-label"><span class="en">Today's Revenue</span><span class="km s-label-km">ប្រាក់ចំណូលថ្ងៃនេះ</span></div>
+        <div class="s-value">$${parseFloat(stats.today_revenue).toFixed(2)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label"><span class="en">Sales Today</span><span class="km s-label-km">ចំនួនការលក់ថ្ងៃនេះ</span></div>
+        <div class="s-value">${stats.today_sales}</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="s-label"><span class="en">Inventory Value</span><span class="km s-label-km">តម្លៃស្តុកសរុប</span></div>
+        <div class="s-value">$${parseFloat(stats.inventory_value).toFixed(0)}</div>
+      </div>
+      <div class="stat-card ${stats.low_stock_count>0?'red':'green'}">
+        <div class="s-label"><span class="en">Low Stock Items</span><span class="km s-label-km">ផលិតផលស្តុកទាប</span></div>
+        <div class="s-value">${stats.low_stock_count}</div>
+      </div>`;
+    setLang(lang);
+  } catch(e) { showToast('Error'); }
+}
+
+// ═══════════ TOAST ═══════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ═══════════ INIT ═══════════
+setLang('en');
+loadProducts();
+</script>
+</body>
+</html>
